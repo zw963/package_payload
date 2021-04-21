@@ -29,10 +29,11 @@ $:  ./package_payload example/bin/dte example/dte
 ```
 
 The first args `example/bin/dte` is where the binary file name you want to place.
-The secondary args `example/dte` is the location of `dte folder` which need package.
+The secondary args `example/dte` is the location of `dte folder` which include all files which need package.
 
-Use package_payload, you can package all your's personal config along with binary into only one bash script, 
-and copy to anywhere run it directly.
+Use package_payload, you can package all your's personal config along with binary into only one bash script.
+Now, you can run dte with `example/bin/dte` directly, even if you delete all files in `example/dte`.
+because all files as payload was included into the only file: `example/bin/dte`,  you can copy anywhere run it directly too.
 
 e.g. you want use it on your's VPS, we assume 123.123.123.123.
 
