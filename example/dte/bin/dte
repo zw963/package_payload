@@ -1,0 +1,18 @@
+#!/bin/bash
+
+ROOT=$(dirname `readlink -e $0`)/..
+
+# export DTE_HOME=$ROOT
+
+(exec -a dte $ROOT/bin.real/dte -r $ROOT/.dte/rc "$@")
+
+# if [ "$PWD" == "$HOME" ]; then
+#     echo -en "\033]0;~\a"
+# else
+#     echo -en "\033]0;$PWD\a"
+# fi
+
+# 可能的 bug:
+# 1. 定义时，小写字母不工作，例如: C-y
+# 2. set mark 时，代码有问题。
+# 3. Consider

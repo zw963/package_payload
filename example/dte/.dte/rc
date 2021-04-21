@@ -1,0 +1,130 @@
+# 使用 dte -K 可以检测出来当到底是什么快捷键！！
+
+# 显示所有默认绑定:
+# Alt+x show bind
+# 或者 dte -b binding/default > binds
+
+set select-cursor-char false
+
+alias cl close
+alias o open
+alias q quit
+alias qf 'quit -f'
+alias wq 'save; quit'
+alias r replace
+alias s save
+alias t tag
+
+# Now you can run read file.txt to insert file.txt into the current buffer.
+alias read 'pipe-from cat'
+
+alias man "run man"
+alias make "compile gcc make"
+
+# format quoted text in email messages
+alias fmt-email "filter fmt -w 74 -p '> '"
+
+option gitcommit,gitrebase file-history false
+option -r '/\.git/.*\.diff$' file-history false
+option diff,mail ws-error 0
+option make indent-width 8 expand-tab false emulate-tab false
+
+# option c,css,go,java,javascript,php,sh,ruby brace-indent true
+
+# option c      indent-regex '^\s*(case|default|do|else|for|if|while)\b'
+# option java   indent-regex '^\s*(case|default|do|else|for|if|while)\b'
+# option php    indent-regex '^\s*(case|default|do|else|for|foreach|if|while)\b'
+# option python indent-regex ':\s*(#.*)?$'
+# option sh     indent-regex '(^\s*|;\s*)(do|else|then)\b'
+
+# gray background for current line
+#hi currentline keep gray keep
+
+errorfmt grep "^([^:]+):([0-9]+):(.*)" file line message
+
+# Remove possible "F" from $LESS so that less will always wait for
+# keypress and "run" can be used without -p.
+#
+#   R: allow ANSI colors
+#   S: chop long lines
+setenv LESS RS
+
+# Emacs like binding
+
+# 注意，当前版本的 dte, 如果是 Ctrl 前缀的快捷键，字母部分必须用大写。
+# moving
+bind C-B left
+bind C-F right
+bind M-B 'word-bwd -s'
+bind M-F 'word-fwd -s'
+bind C-P up
+bind C-N down
+bind C-A bol
+bind C-E eol
+bind M-G "command 'line '"
+bind M-N scroll-down
+bind M-P scroll-up
+bind M-< bof
+bind M-> eof
+bind M-V scroll-pgup
+bind C-V scroll-pgdown
+bind C-G unselect
+
+# delete/undo
+bind C-D delete
+bind M-d 'delete-word -s'
+bind C-K 'delete-eol -n'
+bind C-_ undo
+bind C-M-_ redo
+
+# not work?
+# bind C-M-_ redo
+
+# not use?
+# bind M-C-\? erase-word
+# bind C-\? erase
+
+# mark and copy/paste
+bind C-@ select
+bind C-W cut
+# bind M-w copy
+bind C-C copy
+
+# wayland copy to clipboard
+# bind C-C "pipe-to -l wl-copy -t 'text/plain;charset=utf-8'"
+# bind C-C "pipe-to -l xsel -b"
+bind C-C "pipe-to -l xclip -selection clipboard; unselect"
+
+
+# 因为 paste 和默认的 C-y 在 konsole 下面冲突, 因此, 不得不手动运行 paste 来粘贴.
+# 增加一个快捷方式.
+alias p 'paste -c'
+
+bind M-K 'select -l'
+bind C-X 'quit'
+# bind 'M-^ ' 'select -b'
+
+# search/replace
+bind C-S "search -r"
+bind C-R 'search -wr'
+bind M-5 'command replace\ '
+
+# bind -T search-mode,command-mode ^G cancel
+
+# 有用的默认值, 写出来仅供稍后修改.
+bind F3 'search -n'
+bind F4 'search -p'
+# bind 'M-^?' 'erase-word -s'
+bind ^H 'erase-word -s'
+bind M-t 'insert -m "\t"'
+# bind ^W 'close -wq'
+bind ^T open
+# bind ^O git-open
+bind M-c 'toggle -v case-sensitive-search'
+
+# bind C-U erase-bol
+# bind C-O new-line
+
+# bind tab "shift 1"
+# bind S-tab "shift -- -1"
+# bind C-Z suspend

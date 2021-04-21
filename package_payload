@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# usage:
+# package_payload package_name packaged_folder
+
+# This will create a new packaged version of `package_name', which will extract
+# all files which in `packaged_folder' into a temporary folder, and run
+# `temp_dir/bin/package_name', so, it requires `packaged_folder/bin/package_name'
+# must exists and can be run correctly
+
+package_name=$1
+packaged_folder=$2
+stripped_package_name=$(basename $1)
+tar_file=$(mktemp)
+
+# package the packaged folder into a tar file.
+(builtin cd "$packaged_folder" &>/dev/null && tar -zcvf $tar_file .)
+
+# # 删除源文件的 payload
+# # sed /q keep match line,  /Q not keep
+# sed -i '/^PAYLOAD:$/Q' $package_name
+
+cat <<HEREDOC > $package_name
+#!/bin/bash
+if [[ "\$1" =~ [-_.[:alnum:]]+@.+ ]]; then
+    scp \$0 "\$1":/usr/local/bin
+    ssh "\$1"
+    exit
+fi
+payload_start_line=\$((\$(grep --text --line-number '^PAYLOAD:\$' \$0 | cut -d ':' -f 1) + 1))
+running_dir=\$(mktemp -d)
+if [ ! -d \$running_dir/local ]; then
+    mkdir -p \$running_dir/local
+    echo "\$(tail -n +\${payload_start_line} \$0)" |base64 -d |tar -zxf - -C \$running_dir/local
+fi
+chmod +x \$running_dir/local/bin/$stripped_package_name
+\$running_dir/local/bin/$stripped_package_name "\$@"
+
+exit 0
+
+PAYLOAD:
+HEREDOC
+
+chmod +x $package_name
+
+cat $tar_file |base64 >> $package_name
