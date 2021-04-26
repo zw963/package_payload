@@ -1,11 +1,25 @@
 # package_payload
 
-Package payload is for package a executable binary and all it's dependencies into only one file in linux.
+Package payload is for package a executable binary and all it's dependencies into only one file on linux.
+It should works on any UNIX-LIKE system, e.g. OSX, BSD etc because it only just a tiny bash script.
 
 # How to use it.
 
-This project comes with a sample app, which called [dte](https://gitlab.com/craigbarnes/dte), a powerful 
-command line editor for editing in remote linux host or docker, a perfect replacement for nano.
+Maybe the most easy way to understand how this package work is use examples.
+
+This project comes with two sample app:
+
+1. [dte](https://gitlab.com/craigbarnes/dte), a very powerful command line editor for editing in remote linux host or docker, a perfect replacement for nano, and more, you can check original unpacked version dte [here](https://github.com/zw963/package_payload/tree/main/example/dte). 
+2. docker_bash, as it name, run bash for docker,  a script for easy interact with docker.
+   it can work as following:
+   - docker_bash a_docker_image
+   - docker_bash a_existing_container
+   - docker_bash a_failed_container
+   - docker_bash a_docker_volume
+   
+   For the purpose of package_payload, we want to attach dte editor into docker_bash, when we in container, we can use dte free.
+
+## 1. package dte editor files which in `example/dte` into only one file `example/bin/dte`.
 
 ```sh
 $:  ./package_payload example/bin/dte example/dte
@@ -28,21 +42,23 @@ $:  ./package_payload example/bin/dte example/dte
 ./.dte/rc
 ```
 
-The first args `example/bin/dte` is where the binary file name you want to place.
-The secondary args `example/dte` is the location of `dte folder` which include all files which need package.
+The first args `example/bin/dte` is where the new packaged binary you want to place.
+The secondary args `example/dte` is a folder, is where the `dte editor` files live in,  `example/dte/bin/dte` must exists, and must executable, and will be run when packaged script is running.
 
-Use package_payload, you can package all your's personal config along with binary into only one bash script.
-Now, you can run dte with `example/bin/dte` directly, even if you delete all files in `example/dte`.
-because all files as payload was included into the only file: `example/bin/dte`,  you can copy anywhere run it directly too.
+**NOTICE:** current dte keyboard binding configured as a emacs replacement, if you are not a emacser, you need adjust [config file](https://github.com/zw963/package_payload/blob/main/example/dte/.dte/rc) follow [offical document](https://craigbarnes.gitlab.io/dte/dterc.html)
 
-e.g. you want use it on your's VPS, we assume 123.123.123.123.
+Use package_payload, you can package binary along with all your's personal config into only one file (bash script).
+Now, we have a lonely binary `example/bin/dte`, which can be run anywhere even after delete all files in `example/dte`.
+
+e.g. you want use this editor on your's remote VPS with IP of 123.123.123.123.
 
 ```sh
 $: scp example/bin/dte user@123.123.123.123:
 $: ssh user@123.123.123.123
 S: ./dte
 ```
-or if you have root access, you can do like this too.
+
+There is a more easiler way to copy script into VPS's /usr/local/bin/ and then ssh logged in. (need root access)
 
 ```sh
 $: example/bin/dte root@123.123.123.123
@@ -52,3 +68,13 @@ Web console: https://10-8-2-238:9090/ or https://10.8.2.238:9090/
 Last login: Wed Apr 21 17:21:47 2021 from 118.73.114.209
 [root@10-8-2-238 ~]# 
 ```
+
+## 2. package docker_bash with dte.
+
+    - create folder, `example/docker_bash/bin`, and copy original docker_bash script into it.
+	 - `cd example/docker_bash/bin`
+	 - create a hardlink to above packaged dte editor. `ln ../../bin/dte dte`
+	 - cd back to project root folder. run `./package_payload example/bin/docker_bash example/docker_bash`
+ 
+Now, we have a lonely binary `example/bin/docker_bash`, you can try play it with docker, and don't forget,  
+you can always use `dte` or a alias `nano` when you in container.

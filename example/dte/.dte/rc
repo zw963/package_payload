@@ -87,12 +87,8 @@ bind C-M-_ redo
 # mark and copy/paste
 bind C-@ select
 bind C-W cut
-# bind M-w copy
-bind C-C "copy -bi"
-
-# 因为 paste 和默认的 C-y 在 konsole 下面冲突, 因此, 不得不手动运行 paste 来粘贴.
-# 增加一个快捷方式.
-alias p 'paste -c'
+# 因为这里拷贝到了 system clipboard, 所以, 可以直接使用 terminal 的 paste 功能直接粘帖.
+bind M-w "copy -bi"
 
 bind M-K 'select -l'
 bind C-X 'quit'

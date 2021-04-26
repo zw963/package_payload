@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+dir=$(mktemp -d)
+mkdir -p $dir/local/bin
+
+recovery_1=$dir/local/bin/recovery.sh
+
+cat <<'HEREDOC' > $recovery_1
+#!/bin/sh
+
+export EDITOR="dte"
+# alias apti='apt-get install -qq -y --no-install-recommends'
+alias nano=dte
+/bin/sh
+HEREDOC
+
+chmod +x $recovery_1
+
+ROOT=$(dirname `readlink -e $0`)/
+
+# container_names=$(docker ps |grep -v -e 'ago\s*Restarting'|rev |cut -d' ' -f1 |rev |tail -n +2)
+container_names=$(docker ps --format '{{.Names}} {{.ID}}')
+# images_names=$(docker ps -a |awk '{print $2}' |tail -n +2)
+images_names=$(docker images --format '{{.Repository}} {{.ID}}')
+all_container_names=$(docker ps -a --format '{{.Names}} {{.ID}}')
+volumes=$(docker volume ls |awk '{print $2}'|tail -n +2)
+
+# 设定 args
+[ "$DOCKERIZED_APP_NETWORK" ] && args="--network=$DOCKERIZED_APP_NETWORK"
+
+[ -e .env ] && env_arg='--env-file .env'
+
+function is_port_exist () {
+    netstat -tunl |fgrep 'LISTEN' |awk '{print $4}' |grep ':'"$*"'$'
+}
+
+if [ "$*" ]; then
+    if echo "$container_names" | fgrep -qs -- "$1"; then
+        # 表示 container 存在, 并且已经启动了, 则直接 attach 进去.
+        docker cp $ROOT/dte "$1":/usr/local/bin/
+        docker exec -it --privileged "$@" /bin/sh
+    elif echo "$images_names" |fgrep -qs -- "$1"; then
+        # 如果是一个 images, 则直接启动一个临时的 container.
+
+        # 自动查找下一个可用的端口.
+        init_port=3000
+        while is_port_exist "$init_port"; do
+            init_port=$(($init_port+1))
+        done
+
+        next_port=$(($init_port+1))
+        while is_port_exist "$next_port"; do
+            next_port=$(($next_port+1))
+        done
+
+        echo "[0m[32mport: $init_port:3000, $next_port:80[0m"
+
+        docker run -it $env_arg \
+               -e TERM=$TERM \
+               -v $ROOT/dte:/usr/local/bin/dte \
+               -v $recovery_1:/recovery_1.sh \
+               --entrypoint /recovery_1.sh \
+               --ulimit nofile=150000:150000 \
+               -p $init_port:3000 \
+               -p $next_port:80 \
+               --rm --privileged  $args "$@" /bin/sh
+    elif echo "$all_container_names" |fgrep -qs -- "$1"; then
+        # 如果 container 存在, 但是处于退出状态, 一般都是 build 失败了.
+        # 此时, 进入这个 container, 查询失败的原因有时候是有必要的。
+
+        # 将当前失败的状态，提交到一个临时的 image, 并记录这个 image 的哈希.
+        tmp_images_hash=$(docker commit "$1"|cut -d: -f2|cut -c1-12)
+        # 获取这个失败的 container 加入的最后一个 network
+        network=$(docker inspect -f '{{json .NetworkSettings.Networks}}' "$1" |egrep -o '"[a-z-]+\.network"' |tail -n1|cut -d'"' -f2)
+        echo "Connect to network ${network} ..."
+
+        docker run -it $env_arg \
+               -e TERM=$TERM \
+               -v $ROOT/dte:/usr/local/bin/dte \
+               -v $recovery_1:/recovery_1.sh \
+               --entrypoint /recovery_1.sh \
+               --rm --privileged \
+               --network=$network \
+               $args $tmp_images_hash
+        docker rmi -f $tmp_images_hash
+    elif echo "$volumes" | fgrep -qs -- "$1"; then
+        docker run -it $env_arg \
+               -e TERM=$TERM \
+               -v $ROOT/dte:/usr/local/bin/dte \
+               -v $recovery_1:/recovery_1.sh \
+               --entrypoint /recovery_1.sh \
+               -v "$1":/data \
+               --rm --privileged $args \
+               debian:jessie /bin/bash
+    else
+        echo "error, not exist $1"
+    fi
+else
+    case $(basename $0) in
+        docker_bash)
+            last_container=$(docker ps -q |head -n1)
+            ;;
+        docker_bash!)
+            last_container=$(docker ps -aq |head -n1)
+    esac
+
+    if [ "$last_container" ]; then
+        docker cp $dir/local "$last_container":/usr/
+        docker exec -it --privileged $last_container /bin/sh
+    else
+        echo "error, not exist container"
+    fi
+fi
