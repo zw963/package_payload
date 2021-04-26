@@ -4,6 +4,8 @@ ROOT=$(dirname `readlink -e $0`)/..
 
 # export DTE_HOME=$ROOT
 
+export TERM=xterm-kitty
+
 (exec -a dte $ROOT/bin.real/dte -r $ROOT/.dte/rc "$@")
 
 # if [ "$PWD" == "$HOME" ]; then
