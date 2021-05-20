@@ -10,6 +10,7 @@ alias cl close
 alias o open
 alias q quit
 alias qf 'quit -f'
+alias q! 'quit -f'
 alias wq 'save; quit'
 alias r replace
 alias s save
@@ -55,18 +56,18 @@ setenv LESS RS
 # moving
 bind C-B left
 bind C-F right
-bind M-B 'word-bwd -s'
-bind M-F 'word-fwd -s'
+bind M-b 'word-bwd -s'
+bind M-f 'word-fwd -s'
 bind C-P up
 bind C-N down
 bind C-A bol
 bind C-E eol
-bind M-G "command 'line '"
-bind M-N scroll-down
-bind M-P scroll-up
+bind M-g "command 'line '"
+bind M-n scroll-down
+bind M-p scroll-up
 bind M-< bof
 bind M-> eof
-bind M-V scroll-pgup
+bind M-v scroll-pgup
 bind C-V scroll-pgdown
 bind C-G unselect
 
@@ -90,7 +91,7 @@ bind C-W cut
 # 因为这里拷贝到了 system clipboard, 所以, 可以直接使用 terminal 的 paste 功能直接粘帖.
 bind M-w "copy -bi"
 
-bind M-K 'select -l'
+bind M-k 'select -l'
 bind C-X 'quit'
 # bind 'M-^ ' 'select -b'
 
