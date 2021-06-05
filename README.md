@@ -48,7 +48,8 @@ The secondary args `example/dte` is a folder, is where the `dte editor` files li
 **NOTICE:** current dte keyboard binding configured as a emacs replacement, if you are not a emacser, you need adjust [config file](https://github.com/zw963/package_payload/blob/main/example/dte/.dte/rc) follow [offical document](https://craigbarnes.gitlab.io/dte/dterc.html)
 
 Use package_payload, you can package binary along with all your's personal config into only one file (bash script).
-Now, we have a lonely binary `example/bin/dte`, which can be run anywhere even after delete all files in `example/dte`.
+
+**Now, we have a lonely binary `example/bin/dte`, which can be run anywhere even after delete all original files in `example/dte`.**
 
 e.g. you want use this editor on your's remote VPS with IP of 123.123.123.123.
 
