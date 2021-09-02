@@ -68,3 +68,7 @@ S: dte
  
 Now, we have a lonely binary `example/bin/docker_bash`, you can try play it with docker, and don't forget,  
 you can always use `dte` or a alias `nano` when you in container.
+
+# Following is the list of pre-packaged binary.
+
+[docker_bash](/example/bin/docker_bash)
