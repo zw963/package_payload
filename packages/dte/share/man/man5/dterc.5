@@ -13,7 +13,7 @@ Configuration Commands:
 .br
    \fBalias\fR \fIname\fR \fIcommand\fR
 .br
-   \fBbind\fR \fIkey\fR [\fIcommand\fR]
+   \fBbind\fR [\fB\-cns\fR] \fIkey\fR [\fIcommand\fR]
 .br
    \fBset\fR [\fB\-gl\fR] \fIoption\fR [\fIvalue\fR] ...
 .br
@@ -66,7 +66,7 @@ Buffer Management Commands:
 .P
 Window Management Commands:
 .br
-   \fBwsplit\fR [\fB\-bghnrt\fR] [\fIfilename\fR]...
+   \fBwsplit\fR [\fB\-bhr\fR] [\fB\-g\fR|\fB\-n\fR|\fB\-t\fR] [\fIfilename\fR]...
 .br
    \fBwclose\fR [\fB\-f\fR|\fB\-p\fR]
 .br
@@ -129,9 +129,9 @@ Movement Commands:
 .br
    \fBline\fR \fInumber\fR
 .br
-   \fBtag\fR [\fB\-r\fR] [\fItag\fR]
+   \fBtag\fR [\fB\-r\fR|\fItag\fR]
 .br
-   \fBmsg\fR [\fB\-n\fR|\fB\-p\fR]
+   \fBmsg\fR [\fB\-n\fR|\fB\-p\fR|\fInumber\fR]
 .br
 .P
 Editing Commands:
@@ -168,7 +168,7 @@ Editing Commands:
 .br
    \fBcase\fR [\fB\-l\fR|\fB\-u\fR]
 .br
-   \fBinsert\fR [\fB\-km\fR] \fItext\fR
+   \fBinsert\fR [\fB\-k\fR|\fB\-m\fR] \fItext\fR
 .br
    \fBreplace\fR [\fB\-bcgi\fR] \fIpattern\fR \fIreplacement\fR
 .br
@@ -229,6 +229,8 @@ Global options:
    \fBlock\-files\fR [true]
 .br
    \fBnewline\fR [unix]
+.br
+   \fBoptimize\-true\-color\fR [true]
 .br
    \fBselect\-cursor\-char\fR [true]
 .br
@@ -382,9 +384,15 @@ are the only commands allowed in user config files.
 .P
 \fBalias\fR \fIname\fR \fIcommand\fR
 .RS
-Create an alias \fIname\fR for \fIcommand\fR.
+Create an alias \fIname\fR for \fIcommand\fR. If no \fIcommand\fR is given then any
+existing alias for \fIname\fR is removed.
 .P
-Example:
+Aliases can be used in command mode or bound to keys, just as
+normal commands can. When aliases are used in place of commands, they
+are first recursively expanded (to allow aliases of aliases) and any
+additional arguments are then added to the end of the expanded command.
+.P
+For example, if the following alias is created:
 .P
 .IP
 .nf
@@ -393,11 +401,12 @@ alias\ read\ 'pipe\-from\ cat'
 \f[]
 .fi
 .PP
-Now you can run \fBread file.txt\fR to insert \fBfile.txt\fR into the current
-buffer.
+this can then be invoked as \fBread file.txt\fR, which will expand to
+the command \fBpipe\-from cat file.txt\fR and thus cause \fBfile.txt\fR to be
+inserted into the current buffer.
 .P
 .RE
-\fBbind\fR \fIkey\fR [\fIcommand\fR]
+\fBbind\fR [\fB\-cns\fR] \fIkey\fR [\fIcommand\fR]
 .RS
 Bind \fIcommand\fR to \fIkey\fR. If no \fIcommand\fR is given then any existing
 binding for \fIkey\fR is removed.
@@ -432,7 +441,7 @@ Special keys:
 .br
 \(bu \fBspace\fR
 .br
-\(bu \fBF1\fR..\fBF12\fR
+\(bu \fBF1\fR..\fBF20\fR
 .br
 .P
 Modifiers:
@@ -449,6 +458,77 @@ Alt:
 Shift:
 \fBS\-left\fR
 .PP
+The \fIkey\fR is bound in normal mode by default, unless one or more of the
+following flags are used:
+.P
+.TP
+\fB\-c\fR
+Add binding for \fBcommand\fR mode
+.PP
+.TP
+\fB\-n\fR
+Add binding for normal mode
+.PP
+.TP
+\fB\-s\fR
+Add binding for \fBsearch\fR mode
+.PP
+The commands available in normal mode are the ones listed in the main
+sections of this manual.
+.P
+The commands avilable in \fBcommand\fR/\fBsearch\fR modes are as follows:
+.P
+\(bu \fBleft\fR
+.br
+\(bu \fBright\fR
+.br
+\(bu \fBword\-bwd\fR
+.br
+\(bu \fBword\-fwd\fR
+.br
+\(bu \fBbol\fR
+.br
+\(bu \fBeol\fR
+.br
+\(bu \fBdelete\fR
+.br
+\(bu \fBdelete\-word\fR
+.br
+\(bu \fBdelete\-eol\fR
+.br
+\(bu \fBerase\fR
+.br
+\(bu \fBerase\-word\fR
+.br
+\(bu \fBerase\-bol\fR
+.br
+\(bu \fBcancel\fR
+.br
+\(bu \fBclear\fR
+.br
+\(bu \fBhistory\-next\fR
+.br
+\(bu \fBhistory\-prev\fR
+.br
+\(bu \fBcomplete\-next\fR (command mode)
+.br
+\(bu \fBcomplete\-prev\fR (command mode)
+.br
+\(bu \fBcase\fR (search mode)
+.br
+\(bu \fBdirection\fR (search mode)
+.br
+.P
+Most of these commands behave in a similar fashion to the normal mode
+commands of the same name. The exceptions should be self\-explanatory.
+.P
+See also:
+.P
+\(bu The "key bindings" section in the \fBdte\fR(1) man page
+.br
+\(bu The \fBshow bind\fR command (below)
+.br
+.P
 .RE
 \fBset\fR [\fB\-gl\fR] \fIoption\fR [\fIvalue\fR] ...
 .RS
@@ -542,7 +622,9 @@ The \fIfg\-color\fR and \fIbg\-color\fR arguments can be one of the following:
 .br
 \(bu A 256\-color palette value in R/G/B notation (e.g. \fB0/3/5\fR)
 .br
-\(bu A true color value in CSS\-style #RRGGBB notation (e.g. \fB#ab90df\fR)
+\(bu A true color value in #RRGGBB notation (e.g. \fB#ab90df\fR)
+.br
+\(bu A true color value in #RGB notation (e.g. \fB#1ef\fR)
 .br
 \(bu \fBkeep\fR (\fB\-2\fR)
 .br
@@ -901,7 +983,7 @@ Move current tab to position \fIN\fR or 1 position left or right.
 .P
 .RE
 .SS Window Management Commands
-\fBwsplit\fR [\fB\-bghnrt\fR] [\fIfilename\fR]...
+\fBwsplit\fR [\fB\-bhr\fR] [\fB\-g\fR|\fB\-n\fR|\fB\-t\fR] [\fIfilename\fR]...
 .RS
 Split the current window.
 .P
@@ -1145,27 +1227,32 @@ The character under the cursor should be one of \fB{}[]()<>\fR.
 Go to line.
 .P
 .RE
-\fBtag\fR [\fB\-r\fR] [\fItag\fR]
+\fBtag\fR [\fB\-r\fR|\fItag\fR]
 .RS
-Save the current location and jump to the location of \fItag\fR. If no \fItag\fR
-argument is specified then the word under the cursor is used instead.
+Save the current file/cursor location to a stack and jump to the
+location of \fItag\fR. If the \fItag\fR argument is not given, the word under
+the cursor is used instead (unless \fB\-r\fR is used).
 .P
-This command requires a \fBtags\fR file generated by \fBctags\fR(1). \fBtags\fR files
-are searched for in the current working directory and its parent
-directories.
+The location for \fItag\fR is determined by parsing a \fBtags\fR file from the
+current directory, or any of its parent directories. These files are
+expected be encoded in \fBctags\fR(1) format.
 .P
 .TP
 \fB\-r\fR
-jump back to the previous location
+jump back to the previous location (and pop it off the stack)
 .PP
 See also: \fBmsg\fR command.
 .P
 .RE
-\fBmsg\fR [\fB\-n\fR|\fB\-p\fR]
+\fBmsg\fR [\fB\-n\fR|\fB\-p\fR|\fInumber\fR]
 .RS
-Show latest, next (\fB\-n\fR) or previous (\fB\-p\fR) message. If its location
-is known (compile error or tag message) then the file will be
-opened and cursor moved to the location.
+Display and/or navigate messages, as generated by the \fBcompile\fR
+and \fBtag\fR commands. If the activated message has an associated
+file location, the file will be opened and the cursor moved to
+the appropriate position.
+.P
+If no \fB\-n\fR or \fB\-p\fR flag or \fInumber\fR argument is given, the current
+message will be displayed.
 .P
 .TP
 \fB\-n\fR
@@ -1175,8 +1262,6 @@ Next message
 \fB\-p\fR
 Previous message
 .PP
-See also: \fBcompile\fR and \fBtag\fR commands.
-.P
 .RE
 .SS Editing Commands
 \fBcut\fR
@@ -1301,7 +1386,7 @@ Lower case
 Upper case
 .PP
 .RE
-\fBinsert\fR [\fB\-km\fR] \fItext\fR
+\fBinsert\fR [\fB\-k\fR|\fB\-m\fR] \fItext\fR
 .RS
 Insert \fItext\fR into the buffer.
 .P
@@ -1415,7 +1500,7 @@ Select whole lines
 .RE
 \fBunselect\fR
 .RS
-Unselect.
+Cancel selection.
 .P
 .RE
 .SS External Commands
@@ -1748,6 +1833,21 @@ created files.
 .P
 Note: buffers opened from existing files will have their newline
 type detected automatically.
+.P
+.RE
+\fBoptimize\-true\-color\fR [true]
+.RS
+If set to \fBtrue\fR, this option will cause the \fBhi\fR command to
+automatically replace 24\-bit #RRGGBB colors with palette colors 16\-255,
+but only if there's an exact color match among the default, extended
+palette colors.
+.P
+This allows defining color schemes in #RRGGBB notation while still
+sending the shortest possible escape sequence to the terminal.
+.P
+Note: this optimization only works if the terminal has not been
+configured with custom values for colors 16\-255. If you have changed
+these extended palette colors, you should set this option to \fBfalse\fR.
 .P
 .RE
 \fBselect\-cursor\-char\fR [true]
