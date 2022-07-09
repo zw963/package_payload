@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 dir=$(mktemp -d)
 mkdir -p $dir/local/bin
@@ -35,11 +35,12 @@ function is_port_exist () {
 }
 
 if [ "$*" ]; then
-    if echo "$container_names" | fgrep -qs -- "$1"; then
+    image_name=$(echo "$1" |cut -d':' -f1)
+    if echo "$container_names" | fgrep -qs -- "$image_name"; then
         # 表示 container 存在, 并且已经启动了, 则直接 attach 进去.
         docker cp $ROOT/dte "$1":/usr/local/bin/
         docker exec -it --privileged "$@" /bin/sh
-    elif echo "$images_names" |fgrep -qs -- "$1"; then
+    elif echo "$images_names" |fgrep -qs -- "$image_name"; then
         # 如果是一个 images, 则直接启动一个临时的 container.
 
         # 自动查找下一个可用的端口.
@@ -71,8 +72,12 @@ if [ "$*" ]; then
         # 将当前失败的状态，提交到一个临时的 image, 并记录这个 image 的哈希.
         tmp_images_hash=$(docker commit "$1"|cut -d: -f2|cut -c1-12)
         # 获取这个失败的 container 加入的最后一个 network
-        network=$(docker inspect -f '{{json .NetworkSettings.Networks}}' "$1" |egrep -o '"[a-z-]+\.network"' |tail -n1|cut -d'"' -f2)
-        echo "Connect to network ${network} ..."
+
+        # 这个网络失败了，不知道为什么，先注释掉。
+        # network=$(docker inspect -f '{{json .NetworkSettings.Networks}}' "$1" |egrep -o '"[a-z-]+\.network"' |tail -n1|cut -d'"' -f2)
+        # echo "Connect to network ${network} ..."
+
+        # --network=$network \
 
         docker run -it $env_arg \
                -e TERM=$TERM \
@@ -80,7 +85,6 @@ if [ "$*" ]; then
                -v $recovery_1:/recovery_1.sh \
                --entrypoint /recovery_1.sh \
                --rm --privileged \
-               --network=$network \
                $args $tmp_images_hash
         docker rmi -f $tmp_images_hash
     elif echo "$volumes" | fgrep -qs -- "$1"; then
@@ -91,7 +95,7 @@ if [ "$*" ]; then
                --entrypoint /recovery_1.sh \
                -v "$1":/data \
                --rm --privileged $args \
-               debian:jessie /bin/bash
+               alpine:3.14 /bin/bash
     else
         echo "error, not exist $1"
     fi
