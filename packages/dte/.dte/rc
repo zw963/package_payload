@@ -10,8 +10,7 @@ alias cl close
 alias o open
 alias q quit
 alias qf 'quit -f'
-alias q! 'quit -f'
-alias wq 'save; quit'
+alias wq 'save -f; quit'
 alias r replace
 alias s save
 alias t tag
@@ -89,7 +88,7 @@ bind C-M-_ redo
 bind C-@ select
 bind C-W cut
 # 因为这里拷贝到了 system clipboard, 所以, 可以直接使用 terminal 的 paste 功能直接粘帖.
-bind M-w "copy -bi"
+bind M-w "copy -bip"
 
 bind M-k 'select -l'
 bind C-X 'quit'
