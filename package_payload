@@ -21,8 +21,8 @@ tar_file=$(mktemp)
 # sed -i '/^PAYLOAD:$/Q' $package_name
 
 cat <<HEREDOC > $package_name
-#!/bin/bash
-payload_start_line=\$((\$(grep --text --line-number '^PAYLOAD:\$' \$0 | cut -d ':' -f 1) + 1))
+#!/bin/sh
+payload_start_line=\$((\$(grep -n '^PAYLOAD:\$' \$0 | cut -d ':' -f 1) + 1))
 running_dir=\$(mktemp -d)
 if [ ! -d \$running_dir/local ]; then
     mkdir -p \$running_dir/local
