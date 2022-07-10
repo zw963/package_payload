@@ -53,27 +53,27 @@ setenv LESS RS
 
 # 注意，当前版本的 dte, 如果是 Ctrl 前缀的快捷键，字母部分必须用大写。
 # moving
-bind C-B left
-bind C-F right
+bind C-b left
+bind C-f right
 bind M-b 'word-bwd -s'
 bind M-f 'word-fwd -s'
-bind C-P up
-bind C-N down
-bind C-A bol
-bind C-E eol
+bind C-p up
+bind C-n down
+bind C-a bol
+bind C-e eol
 bind M-g "command 'line '"
 bind M-n scroll-down
 bind M-p scroll-up
 bind M-< bof
 bind M-> eof
 bind M-v scroll-pgup
-bind C-V scroll-pgdown
-bind C-G unselect
+bind C-v scroll-pgdown
+bind C-g unselect
 
 # delete/undo
-bind C-D delete
+bind C-d delete
 bind M-d 'delete-word -s'
-bind C-K 'delete-eol -n'
+bind C-k 'delete-eol -n'
 bind C-_ undo
 bind C-M-_ redo
 
@@ -86,17 +86,17 @@ bind C-M-_ redo
 
 # mark and copy/paste
 bind C-@ select
-bind C-W cut
+bind C-w cut
 # 因为这里拷贝到了 system clipboard, 所以, 可以直接使用 terminal 的 paste 功能直接粘帖.
 bind M-w "copy -bip"
 
 bind M-k 'select -l'
-bind C-X 'quit'
+# bind C-x 'quit'
 # bind 'M-^ ' 'select -b'
 
 # search/replace
-bind C-S "search -r"
-bind C-R 'search -wr'
+bind C-s "search -r"
+bind C-r 'search -wr'
 bind M-5 'command replace\ '
 
 # bind -T search-mode,command-mode ^G cancel
@@ -112,9 +112,9 @@ bind ^T open
 # bind ^O git-open
 bind M-c 'toggle -v case-sensitive-search'
 
-# bind C-U erase-bol
-# bind C-O new-line
+# bind C-u erase-bol
+# bind C-o new-line
 
 # bind tab "shift 1"
 # bind S-tab "shift -- -1"
-# bind C-Z suspend
+bind C-z suspend
