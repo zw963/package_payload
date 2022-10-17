@@ -1,7 +1,6 @@
 #!/bin/bash
 
-ROOT=$(dirname `readlink -e $0`)/..
-ROOT=$(realpath -e $ROOT)
+ROOT=$(cd "$(dirname "$BASH_SOURCE")"/.. >/dev/null; pwd)
 
 if [[ "$1" =~ [-_.[:alnum:]]+@.+ ]]; then
     # target=${BASH_REMATCH[0]}
