@@ -54,9 +54,21 @@ Use package_payload, you can package binary along with all your's personal confi
 e.g. copy to your's remote VPS with IP of 123.123.123.123.
 
 ```sh
-$: scp bin/dte root@123.123.123.123:/usr/local/bin/
-$: ssh root@123.123.123.123
-S: dte
+$: scp example/bin/dte user@123.123.123.123:
+$: ssh user@123.123.123.123
+S: ./dte
+```
+
+There is a more quicky way to copy script into VPS's /usr/local/bin/ then ssh logged in.
+
+```sh
+ ╰─ $ dte root@192.168.50.111
+dte                       100%  491KB  17.0MB/s   00:00    
+Last login: Fri Jan 19 00:44:22 2024 from 192.168.50.44
+[root@localhost ~]# dte -V
+dte 1.11.1-317-gb5aa677c
+[root@localhost ~]# 
+
 ```
 
 ## 2. package docker_bash with dte.

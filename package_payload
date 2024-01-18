@@ -22,6 +22,11 @@ tar_file=$(mktemp)
 
 cat <<HEREDOC > $package_name
 #!/bin/sh
+if [[ "\$1" =~ .*@[0-9.]+\$ ]]; then
+    scp \$0 "\$1":/usr/local/bin
+    ssh "\$1"
+    exit
+fi
 payload_start_line=\$((\$(grep -n '^PAYLOAD:\$' \$0 | cut -d ':' -f 1) + 1))
 running_dir=\$(mktemp -d)
 if [ ! -d \$running_dir/local ]; then
