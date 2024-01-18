@@ -7,7 +7,6 @@ recovery_1=$dir/local/bin/recovery.sh
 
 cat <<'HEREDOC' > $recovery_1
 #!/bin/sh
-
 export EDITOR="dte"
 # alias apti='apt-get install -qq -y --no-install-recommends'
 alias nano=dte
@@ -16,7 +15,7 @@ HEREDOC
 
 chmod +x $recovery_1
 
-ROOT=$(dirname `readlink -e $0`)/
+ROOT=${0%/*}
 
 # container_names=$(docker ps |grep -v -e 'ago\s*Restarting'|rev |cut -d' ' -f1 |rev |tail -n +2)
 container_names=$(docker ps --format '{{.Names}} {{.ID}}')
@@ -31,18 +30,17 @@ volumes=$(docker volume ls |awk '{print $2}'|tail -n +2)
 [ -e .env ] && env_arg='--env-file .env'
 
 function is_port_exist () {
-    netstat -tunl |fgrep 'LISTEN' |awk '{print $4}' |grep ':'"$*"'$'
+    netstat -tunl |grep -F 'LISTEN' |awk '{print $4}' |grep ':'"$*"'$'
 }
 
 if [ "$*" ]; then
     image_name=$(echo "$1" |cut -d':' -f1)
-    if echo "$container_names" | fgrep -qs -- "$image_name"; then
+    if echo "$container_names" |grep -F -qs -- "$image_name"; then
         # 表示 container 存在, 并且已经启动了, 则直接 attach 进去.
         docker cp $ROOT/dte "$1":/usr/local/bin/
         docker exec -it --privileged "$@" /bin/sh
-    elif echo "$images_names" |fgrep -qs -- "$image_name"; then
+    elif echo "$images_names" |grep -F -qs -- "$image_name"; then
         # 如果是一个 images, 则直接启动一个临时的 container.
-
         # 自动查找下一个可用的端口.
         init_port=3000
         while is_port_exist "$init_port"; do
@@ -65,7 +63,7 @@ if [ "$*" ]; then
                -p $init_port:3000 \
                -p $next_port:80 \
                --rm --privileged  $args "$@" /bin/sh
-    elif echo "$all_container_names" |fgrep -qs -- "$1"; then
+    elif echo "$all_container_names" |grep -F -qs -- "$1"; then
         # 如果 container 存在, 但是处于退出状态, 一般都是 build 失败了.
         # 此时, 进入这个 container, 查询失败的原因有时候是有必要的。
 
@@ -87,7 +85,7 @@ if [ "$*" ]; then
                --rm --privileged \
                $args $tmp_images_hash
         docker rmi -f $tmp_images_hash
-    elif echo "$volumes" | fgrep -qs -- "$1"; then
+    elif echo "$volumes" | grep -F -qs -- "$1"; then
         docker run -it $env_arg \
                -e TERM=$TERM \
                -v $ROOT/dte:/usr/local/bin/dte \
@@ -95,7 +93,7 @@ if [ "$*" ]; then
                --entrypoint /recovery_1.sh \
                -v "$1":/data \
                --rm --privileged $args \
-               alpine:3.14 /bin/bash
+               alpine /bin/bash
     else
         echo "error, not exist $1"
     fi

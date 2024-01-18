@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ROOT=$(cd "$(dirname "$BASH_SOURCE")"/.. >/dev/null; pwd)
+ROOT=${0%/*}/..
 
 # export DTE_HOME=$ROOT
 

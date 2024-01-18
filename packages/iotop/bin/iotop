@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ROOT=$(dirname `readlink -f $0`)/..
+ROOT=${0%/*}/..
 
 [ -e /usr/local/bin/iotop ] || sudo ln -sf $ROOT/bin/iotop /usr/local/bin
 
