@@ -1,3 +1,0 @@
-#!/bin/bash
-
-echo "The static build moved to https://craigbarnes.gitlab.io/dte/dte-master-linux-x86_64.tar.gz. It's in a gzipped tarball with the man pages now."
