@@ -40,6 +40,7 @@ errorfmt grep "^([^:]+):([0-9]+):(.*)" file line message
 
 # Emacs like binding, 注意，最后一个参数都是命令，而不是另一个快捷键
 
+# moving
 bind M-n scroll-down
 bind M-p scroll-up
 bind C-b left
@@ -48,33 +49,36 @@ bind C-p up
 bind C-n down
 bind C-a 'bol -s'
 bind C-e eol
-bind C-d delete
 bind M-b 'word-bwd -s'
 bind M-f 'word-fwd -s'
-bind M-d 'delete-word -s'
-bind C-@ select
-bind C-w cut
-bind C-g unselect
-bind C-o new-line
 bind C-M-f match-bracket
 bind C-M-b match-bracket
-bind C-l center-view
-bind M-u case
 
-# 默认向前删除单词是 Alt + Backspace
-# bind C-M-? 'erase-word -s'
-
+# deleting
+bind C-d delete
+bind M-d 'delete-word -s'
+# 这个当前也是 dte 默认值，但是可能更改，因此手动加上，
+bind C-M-? 'erase-word -s'
 bind C-k 'delete-eol -n'
-
 # C-h 是 Ctrl + Backspace, C-u 也是 erase-bol
 bind C-h erase-bol
+
+# set mark
+bind C-@ select
+bind C-g unselect
+
+bind C-o new-line
+bind C-l center-view
+bind M-u case
 
 # F3/F4 search next/previous, 替换 C-r, 反方向搜索 M-r
 # 回车执行默认正则搜索，M-回车，执行普通文本搜索
 bind C-s search
 
 # Konsole 拷贝到 system clipboard 无效，因此，C-y 不工作，只能使用 p 来粘贴
-bind M-w 'copy -bip'
+# 经过测试，konsole -p 无效，alacritty -b -i -p 均完美支持，但是 -bip, 拷贝到系统剪贴板无效。
+bind M-w 'copy -bi'
+bind C-w cut
 alias p 'paste -a'
 
 # 这里的 command ??? 就是相当于宏，先 M-x, 再输入 `line '
