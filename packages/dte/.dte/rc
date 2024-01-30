@@ -25,7 +25,7 @@ alias q quit
 alias qf 'quit -f'
 alias wq 'save -f; quit'
 alias r replace
-alias s save
+alias w save
 alias t tag
 
 # # format quoted text in email messages
@@ -65,6 +65,7 @@ bind C-h erase-bol
 
 # set mark
 bind C-@ select
+bind C-2 select
 bind C-g unselect
 
 bind C-o new-line
