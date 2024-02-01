@@ -33,6 +33,7 @@ alias t tag
 
 # gray background for current line
 hi currentline keep lightblue keep
+hi selection black white keep
 
 errorfmt grep "^([^:]+):([0-9]+):(.*)" file line message
 
