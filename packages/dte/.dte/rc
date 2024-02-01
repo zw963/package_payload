@@ -32,7 +32,7 @@ alias t tag
 # alias fmt-email "filter fmt -w 74 -p '> '"
 
 # gray background for current line
-hi currentline keep lightmagenta keep
+hi currentline keep lightblue keep
 
 errorfmt grep "^([^:]+):([0-9]+):(.*)" file line message
 
