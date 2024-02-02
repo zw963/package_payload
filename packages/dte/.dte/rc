@@ -42,8 +42,7 @@ errorfmt grep "^([^:]+):([0-9]+):(.*)" file line message
 # Emacs like binding, 注意，最后一个参数都是命令，而不是另一个快捷键
 
 # moving
-bind M-n scroll-down
-bind M-p scroll-up
+
 bind C-b left
 bind C-f right
 bind C-p up
@@ -110,12 +109,13 @@ bind -cs C-h erase-bol
 # bind M-= 'shift +1'
 
 
-# --------------- conflict with my konsole ---------------
-# bind M-V scroll-pgup
-# bind C-V scroll-pgdown
-# bind M-< bof
-# bind M-> eof
-# bind C-y paste
+# --------------- conflict with my terminal, but can workaround when use wezterm ---------------
+bind M-v scroll-pgup
+bind C-v scroll-pgdown
+bind M-< bof
+bind M-> eof
+bind M-n scroll-down
+bind M-p scroll-up
 
 # --------------- don't work ---------------
 # bind -T search-mode,command-mode ^G cancel
