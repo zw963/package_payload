@@ -1,12 +1,27 @@
 #!/bin/sh
 
+set -e
+
 ROOT=${0%/*}/..
+
+IFS=$':' read -r file line_number column_number <<HEREDOC
+$1
+HEREDOC
+
+file=${file#b/}
+file=${file#a/}
+
+[ "$line_number" -eq "$line_number" ] 2>/dev/null || unset line_number
+[ "$column_number" -eq "$column_number" ] 2>/dev/null || unset column_number
+
+ln=${line_number++}${line_number}
+ln=${ln}${column_number+:}${column_number}
 
 # export DTE_HOME=$ROOT
 
 # export TERM=kitty
 
-(exec -a dte $ROOT/bin.real/dte -r $ROOT/.dte/rc "$@")
+(exec $ROOT/bin.real/dte -r $ROOT/.dte/rc $ln "$file" ${@:2})
 
 # if [ "$PWD" == "$HOME" ]; then
 #     echo -en "\033]0;~\a"
