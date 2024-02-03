@@ -24,6 +24,17 @@ tar_file=$(mktemp)
 
 cat <<HEREDOC > $package_name
 #!/bin/sh
+
+set -e
+
+if [ -z "\$BASH_VERSION" ]; then
+    if test -h /bin/ls && [[ \$(readlink /bin/ls) =~ busybox ]]; then
+        true
+    else
+        exec bash "\$0" "\$@"
+    fi
+fi
+
 if [[ "\$1" =~ .*@[0-9.]+\$ ]]; then
     scp \$0 "\$1":/usr/local/bin
     ssh "\$1" "[ -e .bashrc ] && cat .bashrc |grep -F -qs -e 'alias e=' || echo 'alias e=dte' >> .bashrc"
