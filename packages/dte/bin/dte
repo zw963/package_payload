@@ -21,7 +21,9 @@ ln=${ln}${column_number+:}${column_number}
 
 # export TERM=kitty
 
-(exec $ROOT/bin.real/dte -r $ROOT/.dte/rc $ln "$file" ${@:2})
+shift
+
+(exec $ROOT/bin.real/dte -r $ROOT/.dte/rc $ln "$file" "${@}")
 
 # if [ "$PWD" == "$HOME" ]; then
 #     echo -en "\033]0;~\a"
