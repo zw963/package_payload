@@ -21,7 +21,9 @@ ln=${ln}${column_number+:}${column_number}
 
 # export TERM=kitty
 
-shift
+if ! [ $# -eq 0 ]; then
+    shift
+fi
 
 (exec $ROOT/bin.real/dte -r $ROOT/.dte/rc $ln "$file" "${@}")
 
