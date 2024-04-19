@@ -31,11 +31,13 @@ alias t tag
 # # format quoted text in email messages
 # alias fmt-email "filter fmt -w 74 -p '> '"
 
-# gray background for current line
-# hi currentline keep lightmagenta keep
-hi default white 16 keep
-hi currentline black darkgray keep
-# hi selection black white keep
+# # 黑色方案
+# hi default white 16 keep
+# hi currentline black darkgray keep
+
+# 白色方案
+# hi currentline white lightblue keep
+hi selection black white keep
 
 errorfmt grep "^([^:]+):([0-9]+):(.*)" file line message
 
