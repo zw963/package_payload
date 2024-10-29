@@ -61,8 +61,6 @@ bind C-M-b match-bracket
 # deleting
 bind C-d delete
 bind M-d 'delete-word -s'
-# 这个当前也是 dte 默认值，但是可能更改，因此手动加上，
-bind C-M-? 'erase-word -s'
 bind C-k 'delete-eol -n'
 # C-h 是 Ctrl + Backspace, C-u 也是 erase-bol
 bind C-h erase-bol
