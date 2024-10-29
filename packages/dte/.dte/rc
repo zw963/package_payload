@@ -87,11 +87,11 @@ alias p 'paste -a'
 bind M-g 'command line\ '
 
 # Ctrl + / 以及 Ctrl + Alt + /
-bind C-_ undo
-bind C-M-_ redo
+bind C-/ undo
+bind C-M-/ redo
 
 bind M-i 'insert -m "\t"'
-bind ^T open
+bind C-t open
 # bind ^O git-open
 
 bind C-z suspend
