@@ -99,8 +99,6 @@ bind C-z suspend
 bind C-x 'close -pwq'
 
 # --------------- Command/search mode bindings ---------------
-bind -cs C-p history-prev
-bind -cs C-n history-next
 bind -cs C-h erase-bol
 
 # --------------- useful default ---------------
