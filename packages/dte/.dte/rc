@@ -62,8 +62,7 @@ bind C-M-b match-bracket
 bind C-d delete
 bind M-d 'delete-word -s'
 bind C-k 'delete-eol -n'
-# C-h 是 Ctrl + Backspace, C-u 也是 erase-bol
-bind C-h erase-bol
+bind C-backspace erase-bol
 
 # set mark
 bind C-@ select
@@ -99,7 +98,7 @@ bind C-z suspend
 bind C-x 'close -pwq'
 
 # --------------- Command/search mode bindings ---------------
-bind -cs C-h erase-bol
+bind -cs C-backspace erase-bol
 
 # --------------- useful default ---------------
 # bind C-q 'quit -p'
