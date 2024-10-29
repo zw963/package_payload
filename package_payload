@@ -15,8 +15,17 @@ packaged_folder=$2
 stripped_package_name=$(basename $1)
 tar_file=$(mktemp)
 
-# package the packaged folder into a tar file.
-(builtin cd "$packaged_folder" &>/dev/null && tar -zcvf $tar_file .)
+# Copy from https://stackoverflow.com/a/77679184/749774
+# package the packaged folder into a tar file, frozen the time to to fixed 1970-01-01 08:00:00
+# which make created tarball base64 never changed if not change original code.
+(
+    builtin cd "$packaged_folder" &>/dev/null &&
+        tar --sort=name \
+            --mtime="1970-01-01 08:00:00" \
+            --owner=0 --group=0 --numeric-owner \
+            --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
+            -zcvf $tar_file .
+)
 
 # # 删除源文件的 payload
 # # sed /q keep match line,  /Q not keep
