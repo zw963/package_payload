@@ -35,16 +35,17 @@ function is_port_exist () {
 
 if [ "$*" ]; then
     image_name=$(echo "$1" |cut -d':' -f1)
+    user=$2
     if echo "$container_names" |grep -F -qs -- "$image_name"; then
         # 表示 container 存在, 并且已经启动了, 则直接 attach 进去.
         docker cp $ROOT/dte "$1":/usr/local/bin/
-        docker exec -it --privileged "$@" /bin/sh
+        docker exec -it -u ${user:-0} --privileged $1 /bin/sh
     elif echo "$images_names" |grep -F -qs -- "$image_name"; then
         # 如果是一个 images, 则直接启动一个临时的 container.
         # 自动查找下一个可用的端口.
         init_port=3000
         while is_port_exist "$init_port"; do
-            init_port=$(($init_port+1))
+             init_port=$(($init_port+1))
         done
 
         next_port=$(($init_port+1))
@@ -55,6 +56,7 @@ if [ "$*" ]; then
         echo "[0m[32mport: $init_port:3000, $next_port:80[0m"
 
         docker run -it $env_arg \
+               -u ${user:-0} \
                -e TERM=$TERM \
                -v $ROOT/dte:/usr/local/bin/dte \
                -v $recovery_1:/recovery_1.sh \
@@ -62,7 +64,7 @@ if [ "$*" ]; then
                --ulimit nofile=150000:150000 \
                -p $init_port:3000 \
                -p $next_port:80 \
-               --rm --privileged  $args "$@" /bin/sh
+               --rm --privileged  $args $1 /bin/sh
     elif echo "$all_container_names" |grep -F -qs -- "$1"; then
         # 如果 container 存在, 但是处于退出状态, 一般都是 build 失败了.
         # 此时, 进入这个 container, 查询失败的原因有时候是有必要的。
@@ -78,6 +80,7 @@ if [ "$*" ]; then
         # --network=$network \
 
         docker run -it $env_arg \
+               -u ${user:-0} \
                -e TERM=$TERM \
                -v $ROOT/dte:/usr/local/bin/dte \
                -v $recovery_1:/recovery_1.sh \
@@ -87,6 +90,7 @@ if [ "$*" ]; then
         docker rmi -f $tmp_images_hash
     elif echo "$volumes" | grep -F -qs -- "$1"; then
         docker run -it $env_arg \
+               -u ${user:-0} \
                -e TERM=$TERM \
                -v $ROOT/dte:/usr/local/bin/dte \
                -v $recovery_1:/recovery_1.sh \
@@ -100,16 +104,16 @@ if [ "$*" ]; then
 else
     case $(basename $0) in
         docker_bash)
-            last_container=$(docker ps -q |head -n1)
+            last_container=$(docker ps -ql)
             ;;
         docker_bash!)
-            last_container=$(docker ps -aq |head -n1)
+            last_container=$(docker ps -aql)
     esac
 
     if [ "$last_container" ]; then
         docker cp $dir/local "$last_container":/usr/
-        docker exec -it --privileged $last_container /bin/sh
+        docker exec -it -u ${user:-0} --privileged $last_container /bin/sh
     else
-        echo "error, not exist container"
+        echo "usage: docker_bash [container_name|image_name] <user>"
     fi
 fi
