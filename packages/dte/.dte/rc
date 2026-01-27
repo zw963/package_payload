@@ -23,6 +23,7 @@ alias cl close
 alias o open
 alias q quit
 alias qf 'quit -f'
+alias q! 'quit -f'
 alias wq 'save -f; quit'
 alias r replace
 alias w save
