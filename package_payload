@@ -58,7 +58,11 @@ if [ ! -d \$running_dir/local ]; then
     echo "\$(tail -n +\${payload_start_line} \$0)" |base64 -d |tar -zxf - -C \$running_dir/local
 fi
 chmod +x \$running_dir/local/bin/$stripped_package_name
-\$running_dir/local/bin/$stripped_package_name "\$@"
+
+
+# 下面的 printf 和 exec -a, 做双重保证，确保命令行的 title 显示打包的 binary 的名称，例如: dte
+printf '\033]0;'$stripped_package_name'\007'
+exec -a $stripped_package_name \$running_dir/local/bin/$stripped_package_name "\$@"
 
 exit 0
 
