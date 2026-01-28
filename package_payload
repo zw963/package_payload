@@ -62,7 +62,14 @@ chmod +x \$running_dir/local/bin/$stripped_package_name
 
 # 下面的 printf 和 exec -a, 做双重保证，确保命令行的 title 显示打包的 binary 的名称，例如: dte
 printf '\033]0;'$stripped_package_name'\007'
-exec -a $stripped_package_name \$running_dir/local/bin/$stripped_package_name "\$@"
+
+function restore_title() {
+  printf '\033]0;%s\007' "bash"
+}
+
+trap restore_title EXIT
+
+\$running_dir/local/bin/$stripped_package_name "\$@"
 
 exit 0
 

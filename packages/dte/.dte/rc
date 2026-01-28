@@ -80,7 +80,6 @@ bind C-s search
 
 # Konsole 拷贝到 system clipboard 无效，因此，C-y 不工作，只能使用 p 来粘贴
 # 经过测试，konsole -p 无效，alacritty -b -i -p 均完美支持，但是 -bip, 拷贝到系统剪贴板无效。
-bind M-w 'copy -bi'
 bind C-w 'delete-line -S'
 alias p 'paste -a'
 
@@ -108,13 +107,15 @@ bind -cs C-backspace erase-bol
 # bind M-= 'shift +1'
 
 
-# --------------- conflict with my terminal, but can workaround when use wezterm ---------------
-bind M-v scroll-pgup
-bind C-v scroll-pgdown
-bind M-< bof
-bind M-> eof
-bind M-n scroll-down
-bind M-p scroll-up
+# --------------- keybinding conflict with terminal, but can be workaround by xremap. ---------------
+bind M-W 'copy -bi'
+bind C-Y 'paste -a'
+bind M-V scroll-pgup
+bind C-V scroll-pgdown
+bind M-, bof
+bind M-. eof
+bind M-N scroll-down
+bind M-P scroll-up
 
 # --------------- don't work ---------------
 # bind -T search-mode,command-mode ^G cancel
