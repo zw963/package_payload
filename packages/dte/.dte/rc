@@ -78,9 +78,7 @@ bind M-u case
 # 回车执行默认正则搜索，M-回车，执行普通文本搜索
 bind C-s search
 
-# Konsole 拷贝到 system clipboard 无效，因此，C-y 不工作，只能使用 p 来粘贴
-# 经过测试，konsole -p 无效，alacritty -b -i -p 均完美支持，但是 -bip, 拷贝到系统剪贴板无效。
-bind C-w 'delete-line -S'
+bind C-w 'cut'
 alias p 'paste -a'
 
 # 这里的 command ??? 就是相当于宏，先 M-x, 再输入 `line '
@@ -108,6 +106,8 @@ bind -cs C-backspace erase-bol
 
 
 # --------------- keybinding conflict with terminal, but can be workaround by xremap. ---------------
+# Konsole 拷贝到 system clipboard 无效，因此，C-y 不工作，只能使用 p 来粘贴
+# 经过测试，konsole -p 无效，alacritty -b -i -p 均完美支持，但是 -bip, 拷贝到系统剪贴板无效。
 bind M-W 'copy -bi'
 bind C-Y 'paste -a'
 bind M-V scroll-pgup
