@@ -8,7 +8,7 @@ Maybe the most easy way to understand how this package work is use examples.
 
 This project comes with some pre-packaged app:
 
-1. [dte](https://gitlab.com/craigbarnes/dte), a very powerful command line editor for editing in remote linux host or docker, a perfect replacement for nano, and more, you can check original unpacked version dte [here](https://github.com/zw963/package_payload/tree/main/example/dte). __NOTICE: To achieve the best user experience, please use it together with [wezterm](https://github.com/wez/wezterm)__, and if you are a Emacs enthusiast, you can try my [.wezterm.lua](https://gist.github.com/zw963/b02e1cd320538a7276f0e0b666b2b8cc) for a awesome emacs user experience, with in docker, remote VPS etc.
+1. [dte](https://gitlab.com/craigbarnes/dte), a very powerful command line editor for editing in remote linux host or docker, a perfect replacement for nano, and more, you can check original unpacked version dte [here](https://github.com/zw963/package_payload/tree/main/example/dte). __NOTICE: To achieve the best user experience, please use it together with [xremap](https://github.com/xremap/xremap)
 2. docker_bash, as it name, run bash for docker,  a script for easy interact with docker.
    it can work as following:
    - docker_bash a_docker_image
