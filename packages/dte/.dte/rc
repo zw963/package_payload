@@ -79,7 +79,7 @@ bind M-u case
 bind C-s search
 
 bind C-w 'cut'
-alias p 'paste -a'
+alias p 'paste -am'
 
 # 这里的 command ??? 就是相当于宏，先 M-x, 再输入 `line '
 bind M-g 'command line\ '
