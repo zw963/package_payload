@@ -12,7 +12,7 @@ set -ue
 
 package_name=$1
 packaged_folder=$2
-stripped_package_name=$(basename $1)
+stripped_package_name=$(basename $package_name)
 tar_file=$(mktemp)
 
 # Copy from https://stackoverflow.com/a/77679184/749774
@@ -26,6 +26,10 @@ tar_file=$(mktemp)
             --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
             -zcvf $tar_file .
 )
+
+# Compute payload metadata
+payload_size="$(stat -c%s "$tar_file")"
+payload_sha256="$(sha256sum "$tar_file" | awk '{print $1}')"
 
 # # 删除源文件的 payload
 # # sed /q keep match line,  /Q not keep
@@ -51,12 +55,27 @@ if [[ "\$1" =~ .*@[0-9.]+\$ ]]; then
     ssh "\$1"
     exit
 fi
-payload_start_line=\$((\$(grep -n '^PAYLOAD:\$' \$0 | cut -d ':' -f 1) + 1))
+payload_start_line=\$((\$(grep -a -m1 -n '^__PAYLOAD__:\$' \$0 | cut -d ':' -f 1) + 1))
+# payload_offset = 文件前 N 行 到 __PAYLOAD__: 这一行结束 (冒号) 为止的字节数
+payload_offset=\$(head -n \$((payload_start_line - 1)) \$0 | wc -c)
+
+payload_size=$payload_size
+payload_sha256=$payload_sha256
+
 running_dir=\$(mktemp -d)
 if [ ! -d \$running_dir/local ]; then
     mkdir -p \$running_dir/local
-    echo "\$(tail -n +\${payload_start_line} \$0)" |base64 -d |tar -zxf - -C \$running_dir/local
+
+    # 这个方案在 busybox 下不工作，因为他不支持 count 以 B 作为单位。
+    # dd if=\$0 of=\$running_dir/payload.tgz bs=1M skip=\${payload_offset}B count=\${payload_size}B status=none
+
+    tail -c +\$((payload_offset + 1)) \$0 | head -c \$payload_size > \$running_dir/payload.tgz
+
+    echo "\$payload_sha256  \$running_dir/payload.tgz" | sha256sum -c - >/dev/null
+
+    tar -zxf \$running_dir/payload.tgz -C \$running_dir/local
 fi
+
 chmod +x \$running_dir/local/bin/$stripped_package_name
 
 
@@ -73,9 +92,10 @@ trap restore_title EXIT
 
 exit 0
 
-PAYLOAD:
+__PAYLOAD__:
 HEREDOC
 
 chmod +x $package_name
 
-cat $tar_file |base64 >> $package_name
+# 直接把二进制 tar.gz append 到脚本末尾
+cat $tar_file >> $package_name

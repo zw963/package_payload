@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# 用法:
+# bfg --strip-blobs-bigger-than 10M .
+
+# 如果提示 no large blobs matching criteria found in packfiles - does the repo need to be packed?
+# 需要运行 git repack -Ad 来首先将零散的小对象 pack 打进新的 pack
+
+# more usage, check https://rtyley.github.io/bfg-repo-cleaner/
+
+ROOT=$(dirname ${BASH_SOURCE})/..
+
+java -jar $ROOT/bfg-1.15.1.jar "$@"
