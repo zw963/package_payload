@@ -55,9 +55,9 @@ if [[ "\$1" =~ .*@[0-9.]+\$ ]]; then
     ssh "\$1"
     exit
 fi
-payload_start_line=\$((\$(grep -a -m1 -n '^__PAYLOAD__:\$' \$0 | cut -d ':' -f 1) + 1))
+
 # payload_offset = 文件前 N 行 到 __PAYLOAD__: 这一行结束 (冒号) 为止的字节数
-payload_offset=\$(head -n \$((payload_start_line - 1)) \$0 | wc -c)
+payload_offset=\$(head -n \`grep -a -m1 -n '^__PAYLOAD__:\$' "\$0" | cut -d: -f1\` "\$0" | wc -c)
 
 payload_size=$payload_size
 payload_sha256=$payload_sha256
