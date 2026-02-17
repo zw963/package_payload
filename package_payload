@@ -60,8 +60,8 @@ payload_offset=\$(head -n \`grep -a -m1 -n '^__PAYLOAD__:\$' "\$0" | cut -d: -f1
 
 running_dir="\${HOME:-/tmp}/.cache/$stripped_package_name/$payload_sha256"
 
-if [ ! -d \$running_dir/local ]; then
-    mkdir -p \$running_dir/local
+if [ ! -d \$running_dir ]; then
+    mkdir -p \$running_dir
 
     # 这个方案在 busybox 下不工作，因为他不支持 count 以 B 作为单位。
     # dd if=\$0 of=\$running_dir/payload.tgz bs=1M skip=\${payload_offset}B count=\${payload_size}B status=none
@@ -70,12 +70,12 @@ if [ ! -d \$running_dir/local ]; then
 
     echo "$payload_sha256  \$running_dir/payload.tgz" | sha256sum -c - >/dev/null
 
-    tar -zxf \$running_dir/payload.tgz -C \$running_dir/local
+    tar -zxf \$running_dir/payload.tgz -C \$running_dir
 
     rm "\$running_dir/payload.tgz"
 fi
 
-binary_path="\$running_dir/local/bin/$stripped_package_name"
+binary_path="\$running_dir/bin/$stripped_package_name"
 
 chmod +x "\$binary_path"
 
