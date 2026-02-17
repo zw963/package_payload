@@ -55,10 +55,12 @@ if [[ "\$1" =~ .*@[0-9.]+\$ ]]; then
     exit
 fi
 
+payload_line_num=\$(grep -a -m1 -n '^__PAYLOAD__:\$' "\$0" | cut -d: -f1)
+combined_hash=\$(head -n "\$payload_line_num" "\$0" | sha256sum | awk '{print \$1}')
 # payload_offset = 文件前 N 行 到 __PAYLOAD__: 这一行结束 (冒号) 为止的字节数
-payload_offset=\$(head -n \`grep -a -m1 -n '^__PAYLOAD__:\$' "\$0" | cut -d: -f1\` "\$0" | wc -c)
+payload_offset=\$(head -n "\$payload_line_num" "\$0" | wc -c)
 
-running_dir="\${HOME:-/tmp}/.cache/$stripped_package_name/$payload_sha256"
+running_dir="\${HOME:-/tmp}/.cache/$stripped_package_name/\$combined_hash"
 
 if [ ! -d \$running_dir ]; then
     mkdir -p \$running_dir
