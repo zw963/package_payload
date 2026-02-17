@@ -58,9 +58,8 @@ fi
 # payload_offset = 文件前 N 行 到 __PAYLOAD__: 这一行结束 (冒号) 为止的字节数
 payload_offset=\$(head -n \`grep -a -m1 -n '^__PAYLOAD__:\$' "\$0" | cut -d: -f1\` "\$0" | wc -c)
 
-payload_sha256=$payload_sha256
+running_dir="\${HOME:-/tmp}/.cache/$stripped_package_name/$payload_sha256"
 
-running_dir=\$(mktemp -d)
 if [ ! -d \$running_dir/local ]; then
     mkdir -p \$running_dir/local
 
@@ -69,12 +68,16 @@ if [ ! -d \$running_dir/local ]; then
 
     tail -c +\$((payload_offset + 1)) \$0 > \$running_dir/payload.tgz
 
-    echo "\$payload_sha256  \$running_dir/payload.tgz" | sha256sum -c - >/dev/null
+    echo "$payload_sha256  \$running_dir/payload.tgz" | sha256sum -c - >/dev/null
 
     tar -zxf \$running_dir/payload.tgz -C \$running_dir/local
+
+    rm "\$running_dir/payload.tgz"
 fi
 
-chmod +x \$running_dir/local/bin/$stripped_package_name
+binary_path="\$running_dir/local/bin/$stripped_package_name"
+
+chmod +x "\$binary_path"
 
 
 # 下面的 printf 和 exec -a, 做双重保证，确保命令行的 title 显示打包的 binary 的名称，例如: dte
@@ -86,7 +89,7 @@ function restore_title() {
 
 trap restore_title EXIT
 
-\$running_dir/local/bin/$stripped_package_name "\$@"
+"\$binary_path" "\$@"
 
 exit 0
 
