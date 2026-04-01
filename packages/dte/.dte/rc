@@ -16,6 +16,7 @@
 set select-cursor-char false
 set indent-width 2
 set show-line-numbers true
+set set-window-title true
 
 # =============== ./dte -R -b rc ===============
 
@@ -109,7 +110,7 @@ bind -cs C-backspace erase-bol
 # Konsole 拷贝到 system clipboard 无效，因此，C-y 不工作，只能使用 p 来粘贴
 # 经过测试，konsole -p 无效，alacritty -b -i -p 均完美支持，但是 -bip, 拷贝到系统剪贴板无效。
 bind M-W 'copy -bi'
-bind C-Y 'paste -a'
+bind C-Y 'paste -am'
 bind M-V scroll-pgup
 bind C-V scroll-pgdown
 bind M-, bof
