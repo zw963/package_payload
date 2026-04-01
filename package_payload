@@ -82,14 +82,14 @@ binary_path="\$running_dir/bin/$stripped_package_name"
 chmod +x "\$binary_path"
 
 
-# 下面的 printf 和 exec -a, 做双重保证，确保命令行的 title 显示打包的 binary 的名称，例如: dte
-printf '\033]0;'$stripped_package_name'\007'
+# # 下面的 printf 和 exec -a, 做双重保证，确保命令行的 title 显示打包的 binary 的名称，例如: dte
+# printf '\033]0;'$stripped_package_name'\007'
 
-function restore_title() {
-  printf '\033]0;%s\007' "bash"
-}
+# function restore_title() {
+#   printf '\033]0;%s\007' "bash"
+# }
 
-trap restore_title EXIT
+# trap restore_title EXIT
 
 "\$binary_path" "\$@"
 
